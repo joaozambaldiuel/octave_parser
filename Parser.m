@@ -6,7 +6,6 @@ classdef Parser < handle
     end
 
     methods
-
         function obj = Parser(tokens)
             obj.tokens = tokens;
             obj.cursor = 1;
@@ -24,7 +23,8 @@ classdef Parser < handle
             if obj.at().kind == kind
                 obj.cursor += 1;
             else    
-                printf("ERROR! Expected Token Type %d, instead recieved: %d\n", kind, obj.at().kind);
+                printf("ERROR! Expected %d, instead recieved: %d\n", 
+                       kind, obj.at().kind);
                 quit();
             end
         end
@@ -43,7 +43,6 @@ classdef Parser < handle
                 obj.eat(obj.at().kind);
                 rhs = obj.parse_expression();
 
-                # criar o left hand side
                 nlhs.type = ExprType.BINARY_OPERATION;
                 nlhs.lhs = lhs;
                 nlhs.opr = operator;
@@ -59,33 +58,32 @@ classdef Parser < handle
         # parse * & / 
         function term = parse_term(obj)
 
-            lhs = obj.parse_factor();
+            term = obj.parse_factor();
 
             while obj.at().kind == TokenType.TIMES || obj.at().kind == TokenType.DIVIDE
-
                 operator = obj.at().value;
                 obj.eat(obj.at().kind);
-                rhs = obj.parse_factor();
+                rhs = obj.parse_term();
 
-                # criar o left hand side
-                nlhs.type = ExprType.BINARY_OPERATION;
-                nlhs.lhs = lhs;
-                nlhs.opr = operator;
-                nlhs.rhs = rhs;
+                aux.type = ExprType.BINARY_OPERATION;
+                aux.opr = operator;
+                aux.lhs = term;
+                aux.rhs = rhs;
 
-                lhs = nlhs;
+                term = aux;
             end
-            term = lhs;
         end
 
         function factor = parse_factor(obj)
 
             if obj.at().kind == TokenType.WORD || obj.at().kind == TokenType.PLUS || obj.at().kind == TokenType.MINUS
+
                 factor.type = ExprType.UNARY_OPERATION;
                 factor.opr = obj.at().value;
                 obj.eat(obj.at().kind);
                 factor.arg = obj.parse_factor();
                 return;
+
             end
 
             if obj.at().kind == TokenType.NUMBER
@@ -104,8 +102,6 @@ classdef Parser < handle
             end
 
         end
-
     end
-
 end
 
