@@ -11,7 +11,7 @@ while true
     recognizer = Recognizer(tokens);
     ast = recognizer.parse();
 
-    printf("%s = %d\n", exp2str(ast), evaluate(ast));
+    printf("ans: %d\n", evaluate(ast));
 
 end
 

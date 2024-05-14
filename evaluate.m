@@ -42,7 +42,7 @@ function s = evaluate(expr)
             s = cos(evaluate(expr.arg));
         end
 
-        if strcmp(expr.opr, "tan")
+        if strcmp(expr.opr, "tan") || strcmp(expr.opr, "tg")
             s = tan(evaluate(expr.arg));
         end
         
@@ -54,7 +54,7 @@ function s = evaluate(expr)
             s = sqrt(evaluate(expr.arg));
         end
  
-        if strcmp(expr.opr, "ln")
+        if strcmp(expr.opr, "ln") || strcmp(expr.opr, "log")
             s = log(evaluate(expr.arg));
         end
 
@@ -62,10 +62,6 @@ function s = evaluate(expr)
 
     if expr.type == ExprType.NUMERIC_LITERAL
         s = expr.value;
-    end
-
-    if expr.type == ExprType.PEXPRESSION
-        s = evaluate(expr.inner_expr);
     end
 
 end

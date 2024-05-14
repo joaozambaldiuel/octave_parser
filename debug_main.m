@@ -51,13 +51,13 @@ while true
     if debug_json
         recognizer = Recognizer(tokenize(input_string));
         ast = recognizer.parse();
-        display(exp2json(ast));
+        display(expr2json(ast));
     end
 
     if eval
         recognizer = Recognizer(tokenize(input_string));
         ast = recognizer.parse();
-        printf("%s = %d\n", exp2str(ast), evaluate(ast));
+        printf("%s = %d\n", expr2str(ast), evaluate(ast));
     end
 
 end
