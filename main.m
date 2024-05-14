@@ -7,7 +7,7 @@ while true
         break;
     end
 
-    parser = Parser(ll1_tokenizer(input_string));
+    parser = Parser(tokenize(input_string));
     ast = parser.parse();
 
     printf("%s = %d\n", exp2str(ast), evaluate(ast));

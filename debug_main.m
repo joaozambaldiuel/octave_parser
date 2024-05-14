@@ -32,7 +32,7 @@ while true
         continue;
     end
 
-    parser = Parser(ll1_tokenizer(input_string));
+    parser = Parser(tokenize(input_string));
 
     if debug_dt
         printf("%d tokes:\n", length(parser.tokens));
