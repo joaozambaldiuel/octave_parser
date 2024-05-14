@@ -35,13 +35,14 @@ classdef Parser < handle
 
         # parse + & -
         function expr = parse_expression(obj)
+
             lhs = obj.parse_term();
 
             while obj.at().kind == TokenType.PLUS || obj.at().kind == TokenType.MINUS
 
                 operator = obj.at().value;
                 obj.eat(obj.at().kind);
-                rhs = obj.parse_expression();
+                rhs = obj.parse_term();
 
                 nlhs.type = ExprType.BINARY_OPERATION;
                 nlhs.lhs = lhs;
@@ -53,17 +54,18 @@ classdef Parser < handle
             end
 
            expr = lhs;
+
         end
 
         # parse * & / 
         function term = parse_term(obj)
 
-            term = obj.parse_factor();
+            term = obj.parse_uop();
 
             while obj.at().kind == TokenType.TIMES || obj.at().kind == TokenType.DIVIDE
                 operator = obj.at().value;
                 obj.eat(obj.at().kind);
-                rhs = obj.parse_term();
+                rhs = obj.parse_uop();
 
                 aux.type = ExprType.BINARY_OPERATION;
                 aux.opr = operator;
@@ -74,17 +76,21 @@ classdef Parser < handle
             end
         end
 
-        function factor = parse_factor(obj)
 
+        function uop = parse_uop(obj)
+            
             if obj.at().kind == TokenType.WORD || obj.at().kind == TokenType.PLUS || obj.at().kind == TokenType.MINUS
-
-                factor.type = ExprType.UNARY_OPERATION;
-                factor.opr = obj.at().value;
+                uop.type = ExprType.UNARY_OPERATION;
+                uop.opr  = obj.at().value;
                 obj.eat(obj.at().kind);
-                factor.arg = obj.parse_factor();
-                return;
-
+                uop.arg = obj.parse_uop();
+            else 
+                uop = obj.parse_factor();
             end
+        end
+
+
+        function factor = parse_factor(obj)
 
             if obj.at().kind == TokenType.NUMBER
                 factor.type = ExprType.NUMERIC_LITERAL;
@@ -95,8 +101,7 @@ classdef Parser < handle
 
             if obj.at().kind == TokenType.LPAREN
                 obj.eat(TokenType.LPAREN);
-                factor.type = ExprType.PEXPRESSION;
-                factor.inner_expr = obj.parse_expression();
+                factor = obj.parse_expression();
                 obj.eat(TokenType.RPAREN);
                 return;
             end
