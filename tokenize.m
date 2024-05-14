@@ -1,9 +1,7 @@
 function tokens = tokenize(input_string)
 
-    % Initialize empty token list
     tokens = {};
     
-    % Iterate through input string
     index = 1;
     while index <= length(input_string)
 

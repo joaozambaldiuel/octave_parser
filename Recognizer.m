@@ -33,16 +33,15 @@ classdef Recognizer < handle
             expr = parse_expression(obj);
         end
 
-        # parse + & -
         function expr = parse_expression(obj)
 
-            expr = obj.parse_term();
+            expr = obj.parse_upm();
 
             while obj.at().kind == TokenType.PLUS || obj.at().kind == TokenType.MINUS
 
                 operator = obj.at().value;
                 obj.eat(obj.at().kind);
-                rhs = obj.parse_term();
+                rhs = obj.parse_upm();
 
                 aux.type = ExprType.BINARY_OPERATION;
                 aux.lhs = expr;
@@ -54,7 +53,17 @@ classdef Recognizer < handle
             end
         end
 
-        # parse * & / 
+        function upm = parse_upm(obj)
+            if obj.at().kind == TokenType.PLUS || obj.at().kind == TokenType.MINUS
+                upm.type = ExprType.UNARY_OPERATION;
+                upm.opr  = obj.at().value;
+                obj.eat(obj.at().kind);
+                upm.arg = obj.parse_term();
+            else
+                upm = obj.parse_term();
+            end
+        end
+
         function term = parse_term(obj)
 
             term = obj.parse_uop();
@@ -73,14 +82,15 @@ classdef Recognizer < handle
             end
         end
 
-
         function uop = parse_uop(obj)
             
-            if obj.at().kind == TokenType.WORD || obj.at().kind == TokenType.PLUS || obj.at().kind == TokenType.MINUS
+            if obj.at().kind == TokenType.WORD
                 uop.type = ExprType.UNARY_OPERATION;
                 uop.opr  = obj.at().value;
                 obj.eat(obj.at().kind);
-                uop.arg = obj.parse_uop();
+                obj.eat(TokenType.LPAREN);
+                uop.arg = obj.parse_expression();
+                obj.eat(TokenType.RPAREN);
             else 
                 uop = obj.parse_factor();
             end
