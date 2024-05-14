@@ -1,4 +1,4 @@
-classdef Parser < handle
+classdef Recognizer < handle
 
     properties
         tokens;
@@ -6,7 +6,7 @@ classdef Parser < handle
     end
 
     methods
-        function obj = Parser(tokens)
+        function obj = Recognizer(tokens)
             obj.tokens = tokens;
             obj.cursor = 1;
         end
@@ -36,7 +36,7 @@ classdef Parser < handle
         # parse + & -
         function expr = parse_expression(obj)
 
-            lhs = obj.parse_term();
+            expr = obj.parse_term();
 
             while obj.at().kind == TokenType.PLUS || obj.at().kind == TokenType.MINUS
 
@@ -44,17 +44,14 @@ classdef Parser < handle
                 obj.eat(obj.at().kind);
                 rhs = obj.parse_term();
 
-                nlhs.type = ExprType.BINARY_OPERATION;
-                nlhs.lhs = lhs;
-                nlhs.opr = operator;
-                nlhs.rhs = rhs;
+                aux.type = ExprType.BINARY_OPERATION;
+                aux.lhs = expr;
+                aux.opr = operator;
+                aux.rhs = rhs;
 
-                lhs = nlhs;
+                expr = aux;
 
             end
-
-           expr = lhs;
-
         end
 
         # parse * & / 

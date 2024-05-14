@@ -32,26 +32,31 @@ while true
         continue;
     end
 
-    parser = Parser(tokenize(input_string));
 
     if debug_dt
-        printf("%d tokes:\n", length(parser.tokens));
-        for i = 1:length(parser.tokens)
-            display_token(parser.tokens{i});
+        tokens = tokenize(input_string);
+        printf("%d tokes:\n", length(tokens));
+        for i = 1:length(tokens)
+            display_token(tokens{i});
         end
     end
 
-    ast = parser.parse();
 
     if debug_da
+        recognizer = Recognizer(tokenize(input_string));
+        ast = recognizer.parse();
         display(ast);
     end
 
     if debug_json
+        recognizer = Recognizer(tokenize(input_string));
+        ast = recognizer.parse();
         display(exp2json(ast));
     end
 
     if eval
+        recognizer = Recognizer(tokenize(input_string));
+        ast = recognizer.parse();
         printf("%s = %d\n", exp2str(ast), evaluate(ast));
     end
 
